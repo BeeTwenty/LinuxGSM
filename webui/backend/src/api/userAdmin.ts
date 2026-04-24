@@ -12,7 +12,7 @@ export interface WebUIUser {
 
 const USERS_FILE = path.join(__dirname, "../../data/webui-users.json");
 
-function readUsers(): WebUIUser[] {
+export function readUsers(): WebUIUser[] {
   if (!fs.existsSync(USERS_FILE)) return [];
   return JSON.parse(fs.readFileSync(USERS_FILE, "utf-8"));
 }

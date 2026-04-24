@@ -1,29 +1,44 @@
+
+import fastify from "fastify";
+import fastifyCookie from "fastify-cookie";
+import fastifyCors from "fastify-cors";
+import fastifyRateLimit from "fastify-rate-limit";
+import fastifyWebsocket from "fastify-websocket";
 import { registerPermissionsAPI } from './api/permissions';
-registerPermissionsAPI(app);
 import { registerUserAdminAPI } from './api/userAdmin';
-registerUserAdminAPI(app);
 import { registerSettingsAPI } from './api/settings';
 import { registerSystemAPI } from './api/system';
-registerSettingsAPI(app);
-registerSystemAPI(app);
 import { registerServerAlertsAPI } from './api/serverAlerts';
-registerServerAlertsAPI(app);
 import { registerServerScheduleAPI } from './api/serverSchedule';
-registerServerScheduleAPI(app);
 import { registerServerBackupAPI } from './api/serverBackup';
-registerServerBackupAPI(app);
 import { registerConsoleWS } from './sockets/console';
-// Register console WebSocket
-registerConsoleWS(app);
 import { registerServerDetailsAPI } from "./api/serverDetails";
 import { registerServerConfigAPI } from "./api/serverConfig";
-// Register server details and config APIs
+import { registerLogStreamWS } from "./logs/stream";
+import { runLinuxGSMCommand } from "./commands/runner";
+import { discoverServers } from "./discovery/servers";
+import { authenticateLinuxUser } from "./auth/pam";
+import { randomUUID } from "crypto";
+
+const app = fastify({ logger: true });
+
+app.register(fastifyCookie);
+app.register(fastifyCors, { origin: false });
+app.register(fastifyRateLimit, { max: 20, timeWindow: "1 minute" });
+app.register(fastifyWebsocket);
+
+registerPermissionsAPI(app);
+registerUserAdminAPI(app);
+registerSettingsAPI(app);
+registerSystemAPI(app);
+registerServerAlertsAPI(app);
+registerServerScheduleAPI(app);
+registerServerBackupAPI(app);
+registerConsoleWS(app);
 registerServerDetailsAPI(app);
 registerServerConfigAPI(app);
-import { registerLogStreamWS } from "./logs/stream";
-// Register WebSocket log streaming
 registerLogStreamWS(app);
-import { runLinuxGSMCommand } from "./commands/runner";
+
 // Run an allowed action on a server
 app.post("/api/servers/:id/actions/:action", async (request, reply) => {
   const { id, action } = request.params as { id: string; action: string };
@@ -39,27 +54,13 @@ app.post("/api/servers/:id/actions/:action", async (request, reply) => {
     return reply.code(400).send({ error: err.message });
   }
 });
-import { discoverServers } from "./discovery/servers";
+
 // List all discovered LinuxGSM servers
 app.get("/api/servers", async (request, reply) => {
   // TODO: Use config for search paths
   const servers = discoverServers();
   return { servers };
 });
-import fastify from "fastify";
-import fastifyCookie from "fastify-cookie";
-import fastifyCors from "fastify-cors";
-import fastifyRateLimit from "fastify-rate-limit";
-import fastifyWebsocket from "fastify-websocket";
-
-const app = fastify({ logger: true });
-
-app.register(fastifyCookie);
-app.register(fastifyCors, { origin: false });
-app.register(fastifyRateLimit, { max: 20, timeWindow: "1 minute" });
-app.register(fastifyWebsocket);
-
-import { authenticateLinuxUser } from "./auth/pam";
 
 const SESSION_SECRET = process.env.WEBUI_SESSION_SECRET || "changeme-please";
 const SESSION_COOKIE = "webui_session";
@@ -69,7 +70,6 @@ const sessions = new Map<
   string,
   { username: string; role: string; created: number }
 >();
-import { randomUUID } from "crypto";
 
 function getUserRole(username: string): string {
   // TODO: Implement real group/sudoers check on Linux
