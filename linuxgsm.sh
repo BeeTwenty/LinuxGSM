@@ -1,3 +1,17 @@
+#!/bin/bash
+# Web UI command dispatch (must be at the very top)
+userinput="${1}"
+if [[ "${userinput}" =~ ^webui-(install|start|stop|restart|status|update|uninstall)$ ]]; then
+	scriptdir="$(dirname \"$(readlink -f \"${BASH_SOURCE[0]}\")\")/webui/scripts"
+	scriptname="${scriptdir}/${userinput}.sh"
+	if [ -x "${scriptname}" ]; then
+		exec "${scriptname}" "${@:2}"
+		exit $?
+	else
+		echo "[Web UI] Command script not found: ${scriptname}"
+		exit 1
+	fi
+fi
 # Web UI command dispatch (must be before any server logic)
 userinput="${1}"
 if [[ "${userinput}" =~ ^webui-(install|start|stop|restart|status|update|uninstall)$ ]]; then
