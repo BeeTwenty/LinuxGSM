@@ -4,9 +4,11 @@ set -e
 # Unified LinuxGSM + Web UI installer
 # Usage: curl -Lo install-lgsm.sh https://linuxgsm.sh && chmod +x install-lgsm.sh && ./install-lgsm.sh
 
-# 1. Prompt for install directory and user
-read -rp "Install directory [~/linuxgsm]: " install_dir
-install_dir=${install_dir:-$HOME/linuxgsm}
+
+# 1. Auto-detect current directory as default for install_dir
+default_dir="$(pwd)"
+read -rp "Install directory [${default_dir}]: " install_dir
+install_dir=${install_dir:-$default_dir}
 
 read -rp "Linux user to run servers and Web UI [$(whoami)]: " lgsm_user
 lgsm_user=${lgsm_user:-$(whoami)}
@@ -33,9 +35,14 @@ fi
 read -rp "Install Web UI? [Y/n]: " install_webui
 install_webui=${install_webui:-Y}
 
+
 if [[ "$install_webui" =~ ^[Yy]$ ]]; then
   echo "[INFO] Installing Web UI..."
   WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
+  if [ ! -f "$WEBUI_INSTALL_SCRIPT" ]; then
+    echo "[ERROR] Could not find $WEBUI_INSTALL_SCRIPT. Please check your install directory."
+    exit 1
+  fi
   if [ ! -x "$WEBUI_INSTALL_SCRIPT" ]; then
     chmod +x "$WEBUI_INSTALL_SCRIPT"
   fi
