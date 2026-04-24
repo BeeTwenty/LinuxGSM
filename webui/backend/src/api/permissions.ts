@@ -1,5 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { WebUIUser, readUsers } from "./userAdmin";
+import { requireAuth, requirePermission } from "../auth/session";
 
 // Permissions list
 export const PERMISSIONS = [
@@ -37,12 +38,12 @@ function writeUsersWithPerms(users: WebUIUserWithPerms[]) {
 
 export function registerPermissionsAPI(app: FastifyInstance) {
   // List all permissions
-  app.get("/api/admin/permissions", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.get("/api/admin/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     reply.send({ permissions: PERMISSIONS });
   });
 
   // Get/set user permissions
-  app.get("/api/admin/users/:username/permissions", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.get("/api/admin/users/:username/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     const { username } = req.params as { username: string };
     const users = readUsersWithPerms();
     const user = users.find((u) => u.username === username);
@@ -50,7 +51,7 @@ export function registerPermissionsAPI(app: FastifyInstance) {
     reply.send({ permissions: user.permissions || [] });
   });
 
-  app.put("/api/admin/users/:username/permissions", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.put("/api/admin/users/:username/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     const { username } = req.params as { username: string };
     const { permissions } = req.body as { permissions: Permission[] };
     if (!Array.isArray(permissions)) return reply.code(400).send({ error: "Invalid permissions" });
@@ -63,7 +64,4 @@ export function registerPermissionsAPI(app: FastifyInstance) {
   });
 }
 
-// Dummy admin check middleware (replace with real session/auth logic)
-function requireAdmin(req: any, reply: any, done: any) {
-  done();
-}
+

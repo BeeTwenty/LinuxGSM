@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import { requireAuth, requirePermission } from "../auth/session";
 import fs from "fs";
 import path from "path";
 
@@ -22,12 +23,12 @@ function writeUsers(users: WebUIUser[]) {
 
 export function registerUserAdminAPI(app: FastifyInstance) {
   // List users (admin only)
-  app.get("/api/admin/users", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.get("/api/admin/users", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     reply.send({ users: readUsers() });
   });
 
   // Add user (admin only)
-  app.post("/api/admin/users", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.post("/api/admin/users", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     const { username, role } = req.body as { username: string; role: "admin" | "user" };
     if (!username || !role) return reply.code(400).send({ error: "Missing fields" });
     const users = readUsers();
@@ -40,7 +41,7 @@ export function registerUserAdminAPI(app: FastifyInstance) {
   });
 
   // Update user (admin only)
-  app.put("/api/admin/users/:username", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.put("/api/admin/users/:username", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     const { username } = req.params as { username: string };
     const { role, enabled } = req.body as { role?: "admin" | "user"; enabled?: boolean };
     const users = readUsers();
@@ -53,7 +54,7 @@ export function registerUserAdminAPI(app: FastifyInstance) {
   });
 
   // Delete user (admin only)
-  app.delete("/api/admin/users/:username", { preHandler: [requireAdmin] }, (req, reply) => {
+  app.delete("/api/admin/users/:username", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
     const { username } = req.params as { username: string };
     let users = readUsers();
     if (!users.find((u) => u.username === username)) {
@@ -65,9 +66,4 @@ export function registerUserAdminAPI(app: FastifyInstance) {
   });
 }
 
-// Dummy admin check middleware (replace with real session/auth logic)
-function requireAdmin(req: any, reply: any, done: any) {
-  // TODO: Check session/cookie for admin role
-  // For now, allow all for development
-  done();
-}
+
