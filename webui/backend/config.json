@@ -1,11 +1,11 @@
 {
-  "port": 8080,
-  "bind": "0.0.0.0",
-  "sessionTimeout": 3600,
-  "allowedServerPaths": ["../"],
-  "logLevel": "info",
-  "reverseProxy": false,
-  "tls": false,
-  "allowedOrigins": ["http://localhost:5173"],
-  "auditLog": "./audit.log"
+	"port": 8080,
+	"bind": "0.0.0.0",
+	"sessionTimeout": 3600,
+	"allowedServerPaths": ["../"],
+	"logLevel": "info",
+	"reverseProxy": false,
+	"tls": false,
+	"allowedOrigins": ["http://localhost:5173"],
+	"auditLog": "./audit.log"
 }
