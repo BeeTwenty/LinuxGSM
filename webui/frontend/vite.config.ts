@@ -8,5 +8,11 @@ export default defineConfig({
     proxy: {
       "/api": "http://localhost:8080",
     },
+    allowedHosts: [
+      "panel.au11no.com",
+      "localhost",
+      "127.0.0.1",
+      "0.0.0.0"
+    ],
   },
 });
