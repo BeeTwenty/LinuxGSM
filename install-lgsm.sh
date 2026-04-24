@@ -51,13 +51,13 @@ if [[ "$install_webui" =~ ^[Yy]$ ]]; then
     fi
     sudo apt-get update && sudo apt-get install -y libpam0g-dev build-essential python3 curl
   elif [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
-    sudo yum install -y pam-devel @development-tools python3 npm nodejs curl
+    sudo yum install -y pam-devel @development-tools python3 nodejs curl
   elif [ -f /etc/alpine-release ]; then
-    sudo apk add linux-pam-dev build-base python3 npm nodejs curl
+    sudo apk add linux-pam-dev build-base python3 nodejs curl
   elif [ -f /etc/os-release ] && grep -qi suse /etc/os-release; then
-    sudo zypper install -y pam-devel -t pattern devel_basis python3 npm nodejs curl
+    sudo zypper install -y pam-devel -t pattern devel_basis python3 nodejs curl
   else
-    echo "[WARNING] Unknown distro. Please install libpam-dev, build tools, python3, npm, nodejs, curl manually."
+    echo "[WARNING] Unknown distro. Please install libpam-dev, build tools, python3, nodejs, curl manually."
   fi
   WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
   if [ ! -f "$WEBUI_INSTALL_SCRIPT" ]; then
