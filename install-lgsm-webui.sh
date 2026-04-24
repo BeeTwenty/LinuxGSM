@@ -49,7 +49,10 @@ if [ ! -d webui/backend ] || [ ! -d webui/frontend ]; then
   exit 1
 fi
 cd webui/backend
-npm ci --omit=dev
+if ! npm ci --omit=dev; then
+  echo "npm ci failed, falling back to npm install..."
+  npm install --omit=dev
+fi
 # Ensure TypeScript is installed if tsc is missing
 if ! npx tsc --version >/dev/null 2>&1; then
   echo "TypeScript not found, installing..."
@@ -57,7 +60,10 @@ if ! npx tsc --version >/dev/null 2>&1; then
 fi
 npm run build
 cd ../frontend
-npm ci --omit=dev
+if ! npm ci --omit=dev; then
+  echo "npm ci failed, falling back to npm install..."
+  npm install --omit=dev
+fi
 npm run build
 
 # 5. Systemd service for backend
