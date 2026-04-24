@@ -10,13 +10,9 @@ import { registerServerAlertsAPI } from './api/serverAlerts';
 registerServerAlertsAPI(app);
 import { registerServerScheduleAPI } from './api/serverSchedule';
 registerServerScheduleAPI(app);
-<<<<<<< HEAD
 import { registerServerBackupAPI } from './api/serverBackup';
 registerServerBackupAPI(app);
 import { registerConsoleWS } from './sockets/console';
-=======
-import { registerConsoleWS } from "./sockets/console";
->>>>>>> abe2321aae35fb3203d28a4b6020f260f657969a
 // Register console WebSocket
 registerConsoleWS(app);
 import { registerServerDetailsAPI } from "./api/serverDetails";
