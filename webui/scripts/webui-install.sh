@@ -4,8 +4,12 @@ set -e
 # LinuxGSM Web UI install script
 # Usage: ./gameserver webui-install
 
+# Always resolve to the webui root, no matter where called from
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WEBUI_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$WEBUI_ROOT"
+
 echo "[INFO] Starting LinuxGSM Web UI install..."
-cd "$(dirname "$0")/.."
 
 if ! command -v node > /dev/null 2>&1; then
 	echo "[ERROR] Node.js is required. Please install Node.js >= 18."
@@ -13,7 +17,7 @@ if ! command -v node > /dev/null 2>&1; then
 fi
 
 echo "[INFO] Installing backend dependencies..."
-cd webui/backend
+cd backend
 if ! npm install; then
 	echo "[ERROR] npm install failed in backend. Check npm logs."
 	exit 1
@@ -34,7 +38,7 @@ if ! npm run build; then
 	exit 1
 fi
 
-cd ..
+cd "$WEBUI_ROOT"
 cp scripts/webui-systemd.service /etc/systemd/system/linuxgsm-webui.service 2> /dev/null || true
 
 echo "[SUCCESS] LinuxGSM Web UI installed. Use './gameserver webui-start' to launch."
