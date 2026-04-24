@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ServerLogs from './ServerLogs';
 import ServerDetails from './ServerDetails';
+import ServerConfigs from './ServerConfigs';
 
 interface Server {
   id: string;
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
   const [logServer, setLogServer] = useState<string | null>(null);
   const [detailsServer, setDetailsServer] = useState<string | null>(null);
+  const [configsServer, setConfigsServer] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get('/api/servers')
@@ -83,6 +85,25 @@ export default function Dashboard() {
                 >
                   Details
                 </button>
+                <button
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                  onClick={() => setConfigsServer(server.id)}
+                >
+                  Configs
+                </button>
+                    {configsServer && (
+                      <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                        <div className="bg-gray-900 rounded shadow-lg max-w-2xl w-full relative">
+                          <button
+                            className="absolute top-2 right-2 text-gray-400 hover:text-white"
+                            onClick={() => setConfigsServer(null)}
+                          >
+                            ✕
+                          </button>
+                          <ServerConfigs serverId={configsServer} onClose={() => setConfigsServer(null)} />
+                        </div>
+                      </div>
+                    )}
               </div>
             </div>
           ))}

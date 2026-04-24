@@ -1,3 +1,6 @@
+import { registerConsoleWS } from './sockets/console';
+// Register console WebSocket
+registerConsoleWS(app);
 import { registerServerDetailsAPI } from './api/serverDetails';
 import { registerServerConfigAPI } from './api/serverConfig';
 // Register server details and config APIs
