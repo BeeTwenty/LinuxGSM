@@ -25,7 +25,7 @@ export function registerConsoleWS(app: FastifyInstance) {
       tmux.stderr.on("data", (data) =>
         connection.socket.send("[stderr] " + data.toString()),
       );
-      connection.socket.on("message", (msg) => {
+      connection.socket.on("message", (msg: any) => {
         // Only allow sending to tmux, not shell
         tmux.stdin.write(msg + "\n");
       });
