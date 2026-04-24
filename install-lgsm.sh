@@ -1,0 +1,43 @@
+#!/bin/bash
+set -e
+
+# Unified LinuxGSM + Web UI installer
+# Usage: curl -Lo install-lgsm.sh https://linuxgsm.sh && chmod +x install-lgsm.sh && ./install-lgsm.sh
+
+# 1. Prompt for install directory and user
+read -rp "Install directory [~/linuxgsm]: " install_dir
+install_dir=${install_dir:-$HOME/linuxgsm}
+
+read -rp "Linux user to run servers and Web UI [$(whoami)]: " lgsm_user
+lgsm_user=${lgsm_user:-$(whoami)}
+
+# 2. Create directory and check user
+mkdir -p "$install_dir"
+cd "$install_dir"
+
+if [ "$EUID" -eq 0 ]; then
+  echo "Do not run as root. Please run as the target user."
+  exit 1
+fi
+
+# 3. Download LinuxGSM core script
+if [ ! -f linuxgsm.sh ]; then
+  curl -Lo linuxgsm.sh https://linuxgsm.sh
+  chmod +x linuxgsm.sh
+fi
+
+# 4. Install LinuxGSM (core only, no per-server user creation)
+./linuxgsm.sh install
+
+# 5. Prompt to install Web UI
+read -rp "Install Web UI? [Y/n]: " install_webui
+install_webui=${install_webui:-Y}
+if [[ "$install_webui" =~ ^[Yy]$ ]]; then
+  cd "$install_dir"
+  ./linuxgsm.sh webui-install
+  echo "Web UI installed. Use './linuxgsm.sh webui-start' to launch."
+fi
+
+echo "\nLinuxGSM and Web UI installation complete!"
+echo "To add a game server, run: ./linuxgsm.sh <servername>"
+echo "To manage the Web UI, use: ./linuxgsm.sh webui-start|stop|status|update|uninstall"
