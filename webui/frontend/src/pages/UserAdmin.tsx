@@ -8,35 +8,36 @@ interface WebUIUser {
   enabled: boolean;
   permissions?: Permission[];
 }
-const [editingPerms, setEditingPerms] = useState<Record<string, Permission[]>>(
-  {},
-);
-const [permsLoading, setPermsLoading] = useState<Record<string, boolean>>({});
-// Fetch permissions for a user
-const fetchPerms = async (username: string) => {
-  setPermsLoading((pl) => ({ ...pl, [username]: true }));
-  try {
-    const res = await axios.get(`/api/admin/users/${username}/permissions`);
-    setEditingPerms((ep) => ({ ...ep, [username]: res.data.permissions }));
-  } catch {
-    setEditingPerms((ep) => ({ ...ep, [username]: [] }));
-  } finally {
-    setPermsLoading((pl) => ({ ...pl, [username]: false }));
-  }
-};
-// Save permissions for a user
-const savePerms = async (username: string) => {
-  setPermsLoading((pl) => ({ ...pl, [username]: true }));
-  try {
-    await axios.put(`/api/admin/users/${username}/permissions`, {
-      permissions: editingPerms[username],
-    });
-  } catch {
-    alert("Failed to update permissions");
-  } finally {
-    setPermsLoading((pl) => ({ ...pl, [username]: false }));
-  }
-};
+
+export default function UserAdmin({ onClose }: { onClose: () => void }) {
+  const [editingPerms, setEditingPerms] = useState<Record<string, Permission[]>>({});
+  const [permsLoading, setPermsLoading] = useState<Record<string, boolean>>({});
+
+  // Fetch permissions for a user
+  const fetchPerms = async (username: string) => {
+    setPermsLoading((pl) => ({ ...pl, [username]: true }));
+    try {
+      const res = await axios.get(`/api/admin/users/${username}/permissions`);
+      setEditingPerms((ep) => ({ ...ep, [username]: res.data.permissions }));
+    } catch {
+      setEditingPerms((ep) => ({ ...ep, [username]: [] }));
+    } finally {
+      setPermsLoading((pl) => ({ ...pl, [username]: false }));
+    }
+  };
+  // Save permissions for a user
+  const savePerms = async (username: string) => {
+    setPermsLoading((pl) => ({ ...pl, [username]: true }));
+    try {
+      await axios.put(`/api/admin/users/${username}/permissions`, {
+        permissions: editingPerms[username],
+      });
+    } catch {
+      alert("Failed to update permissions");
+    } finally {
+      setPermsLoading((pl) => ({ ...pl, [username]: false }));
+    }
+  };
 
 export default function UserAdmin({ onClose }: { onClose: () => void }) {
   const [users, setUsers] = useState<WebUIUser[]>([]);
