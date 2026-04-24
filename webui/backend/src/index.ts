@@ -1,3 +1,5 @@
+import { registerServerBackupAPI } from './api/serverBackup';
+registerServerBackupAPI(app);
 import { registerConsoleWS } from './sockets/console';
 // Register console WebSocket
 registerConsoleWS(app);
