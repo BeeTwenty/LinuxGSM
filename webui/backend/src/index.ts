@@ -1,3 +1,29 @@
+import { registerLogStreamWS } from './logs/stream';
+// Register WebSocket log streaming
+registerLogStreamWS(app);
+import { runLinuxGSMCommand } from './commands/runner';
+// Run an allowed action on a server
+app.post('/api/servers/:id/actions/:action', async (request, reply) => {
+  const { id, action } = request.params as { id: string; action: string };
+  const servers = discoverServers();
+  const server = servers.find(s => s.id === id);
+  if (!server) {
+    return reply.code(404).send({ error: 'Server not found' });
+  }
+  try {
+    const result = await runLinuxGSMCommand(server.scriptPath, action);
+    return { success: true, ...result };
+  } catch (err: any) {
+    return reply.code(400).send({ error: err.message });
+  }
+});
+import { discoverServers } from './discovery/servers';
+// List all discovered LinuxGSM servers
+app.get('/api/servers', async (request, reply) => {
+  // TODO: Use config for search paths
+  const servers = discoverServers();
+  return { servers };
+});
 import fastify from 'fastify';
 import fastifyCookie from 'fastify-cookie';
 import fastifyCors from 'fastify-cors';
