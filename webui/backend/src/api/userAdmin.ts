@@ -23,47 +23,68 @@ function writeUsers(users: WebUIUser[]) {
 
 export function registerUserAdminAPI(app: FastifyInstance) {
   // List users (admin only)
-  app.get("/api/admin/users", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    reply.send({ users: readUsers() });
-  });
+  app.get(
+    "/api/admin/users",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      reply.send({ users: readUsers() });
+    },
+  );
 
   // Add user (admin only)
-  app.post("/api/admin/users", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    const { username, role } = req.body as { username: string; role: "admin" | "user" };
-    if (!username || !role) return reply.code(400).send({ error: "Missing fields" });
-    const users = readUsers();
-    if (users.find((u) => u.username === username)) {
-      return reply.code(400).send({ error: "User already exists" });
-    }
-    users.push({ username, role, enabled: true });
-    writeUsers(users);
-    reply.send({ success: true });
-  });
+  app.post(
+    "/api/admin/users",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      const { username, role } = req.body as {
+        username: string;
+        role: "admin" | "user";
+      };
+      if (!username || !role)
+        return reply.code(400).send({ error: "Missing fields" });
+      const users = readUsers();
+      if (users.find((u) => u.username === username)) {
+        return reply.code(400).send({ error: "User already exists" });
+      }
+      users.push({ username, role, enabled: true });
+      writeUsers(users);
+      reply.send({ success: true });
+    },
+  );
 
   // Update user (admin only)
-  app.put("/api/admin/users/:username", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    const { username } = req.params as { username: string };
-    const { role, enabled } = req.body as { role?: "admin" | "user"; enabled?: boolean };
-    const users = readUsers();
-    const user = users.find((u) => u.username === username);
-    if (!user) return reply.code(404).send({ error: "User not found" });
-    if (role) user.role = role;
-    if (typeof enabled === "boolean") user.enabled = enabled;
-    writeUsers(users);
-    reply.send({ success: true });
-  });
+  app.put(
+    "/api/admin/users/:username",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      const { username } = req.params as { username: string };
+      const { role, enabled } = req.body as {
+        role?: "admin" | "user";
+        enabled?: boolean;
+      };
+      const users = readUsers();
+      const user = users.find((u) => u.username === username);
+      if (!user) return reply.code(404).send({ error: "User not found" });
+      if (role) user.role = role;
+      if (typeof enabled === "boolean") user.enabled = enabled;
+      writeUsers(users);
+      reply.send({ success: true });
+    },
+  );
 
   // Delete user (admin only)
-  app.delete("/api/admin/users/:username", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    const { username } = req.params as { username: string };
-    let users = readUsers();
-    if (!users.find((u) => u.username === username)) {
-      return reply.code(404).send({ error: "User not found" });
-    }
-    users = users.filter((u) => u.username !== username);
-    writeUsers(users);
-    reply.send({ success: true });
-  });
+  app.delete(
+    "/api/admin/users/:username",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      const { username } = req.params as { username: string };
+      let users = readUsers();
+      if (!users.find((u) => u.username === username)) {
+        return reply.code(404).send({ error: "User not found" });
+      }
+      users = users.filter((u) => u.username !== username);
+      writeUsers(users);
+      reply.send({ success: true });
+    },
+  );
 }
-
-

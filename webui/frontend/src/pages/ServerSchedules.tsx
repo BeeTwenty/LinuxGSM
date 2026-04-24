@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 interface ServerSchedulesProps {
   serverId: string;
@@ -11,47 +11,64 @@ interface Schedule {
   line: string;
 }
 
-export default function ServerSchedules({ serverId, onClose }: ServerSchedulesProps) {
+export default function ServerSchedules({
+  serverId,
+  onClose,
+}: ServerSchedulesProps) {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [newLine, setNewLine] = useState('');
-  const [msg, setMsg] = useState('');
+  const [error, setError] = useState("");
+  const [newLine, setNewLine] = useState("");
+  const [msg, setMsg] = useState("");
 
   const loadSchedules = () => {
     setLoading(true);
-    axios.get(`/api/servers/${serverId}/schedules`)
-      .then(res => setSchedules(res.data.schedules))
-      .catch(() => setError('Failed to load schedules'))
+    axios
+      .get(`/api/servers/${serverId}/schedules`)
+      .then((res) => setSchedules(res.data.schedules))
+      .catch(() => setError("Failed to load schedules"))
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { loadSchedules(); }, [serverId]);
+  useEffect(() => {
+    loadSchedules();
+  }, [serverId]);
 
   const addSchedule = () => {
     if (!newLine.trim()) return;
-    axios.post(`/api/servers/${serverId}/schedules`, { line: newLine })
-      .then(() => { setMsg('Added'); setNewLine(''); loadSchedules(); })
-      .catch(() => setMsg('Add failed'));
+    axios
+      .post(`/api/servers/${serverId}/schedules`, { line: newLine })
+      .then(() => {
+        setMsg("Added");
+        setNewLine("");
+        loadSchedules();
+      })
+      .catch(() => setMsg("Add failed"));
   };
 
   const deleteSchedule = (id: number) => {
-    if (!window.confirm('Delete this schedule?')) return;
-    axios.delete(`/api/servers/${serverId}/schedules/${id}`)
-      .then(() => { setMsg('Deleted'); loadSchedules(); })
-      .catch(() => setMsg('Delete failed'));
+    if (!window.confirm("Delete this schedule?")) return;
+    axios
+      .delete(`/api/servers/${serverId}/schedules/${id}`)
+      .then(() => {
+        setMsg("Deleted");
+        loadSchedules();
+      })
+      .catch(() => setMsg("Delete failed"));
   };
 
   return (
     <div className="p-4">
-      <button className="mb-2 text-gray-400 hover:text-white" onClick={onClose}>← Back</button>
+      <button className="mb-2 text-gray-400 hover:text-white" onClick={onClose}>
+        ← Back
+      </button>
       <h3 className="font-bold mb-2">Schedules (cron format)</h3>
       {error && <div className="text-red-400 mb-2">{error}</div>}
       <div className="mb-2">
         <input
           className="bg-gray-800 text-white p-2 rounded text-xs w-2/3"
           value={newLine}
-          onChange={e => setNewLine(e.target.value)}
+          onChange={(e) => setNewLine(e.target.value)}
           placeholder="* * * * * /path/to/script action"
         />
         <button
@@ -70,7 +87,7 @@ export default function ServerSchedules({ serverId, onClose }: ServerSchedulesPr
           </tr>
         </thead>
         <tbody>
-          {schedules.map(s => (
+          {schedules.map((s) => (
             <tr key={s.id} className="border-t border-gray-700">
               <td className="p-2 font-mono">{s.line}</td>
               <td className="p-2">
@@ -85,7 +102,9 @@ export default function ServerSchedules({ serverId, onClose }: ServerSchedulesPr
           ))}
         </tbody>
       </table>
-      {schedules.length === 0 && !loading && <div className="mt-4">No schedules found.</div>}
+      {schedules.length === 0 && !loading && (
+        <div className="mt-4">No schedules found.</div>
+      )}
     </div>
   );
 }

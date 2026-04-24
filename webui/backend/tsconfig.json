@@ -8,10 +8,7 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"types": ["node"],
-		"typeRoots": [
-			"./src/types",
-			"./node_modules/@types"
-		]
+		"typeRoots": ["./src/types", "./node_modules/@types"]
 	},
 	"include": ["src/**/*.ts"]
 }
