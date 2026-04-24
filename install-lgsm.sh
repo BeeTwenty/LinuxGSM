@@ -36,8 +36,22 @@ read -rp "Install Web UI? [Y/n]: " install_webui
 install_webui=${install_webui:-Y}
 
 
+
 if [[ "$install_webui" =~ ^[Yy]$ ]]; then
   echo "[INFO] Installing Web UI..."
+  # Check for PAM development headers and install if missing
+  if ! (echo "#include <security/pam_appl.h>" | gcc -E - 2>/dev/null | grep pam_appl.h >/dev/null); then
+    echo "[INFO] PAM development headers not found. Attempting to install..."
+    if [ -f /etc/debian_version ]; then
+      sudo apt-get update && sudo apt-get install -y libpam0g-dev
+    elif [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
+      sudo yum install -y pam-devel
+    elif [ -f /etc/alpine-release ]; then
+      sudo apk add linux-pam-dev
+    else
+      echo "[WARNING] Unknown distro. Please install PAM development headers manually."
+    fi
+  fi
   WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
   if [ ! -f "$WEBUI_INSTALL_SCRIPT" ]; then
     echo "[ERROR] Could not find $WEBUI_INSTALL_SCRIPT. Please check your install directory."
