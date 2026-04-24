@@ -1,9 +1,14 @@
-let authenticateLinuxUser: (username: string, password: string) => Promise<boolean>;
+let authenticateLinuxUser: (
+  username: string,
+  password: string,
+) => Promise<boolean>;
 
 if (process.platform === "win32") {
   // Windows mock: always return true and log a warning
   authenticateLinuxUser = async (username: string, password: string) => {
-    console.warn("[MOCK] PAM authentication is not available on Windows. Always returns true.");
+    console.warn(
+      "[MOCK] PAM authentication is not available on Windows. Always returns true.",
+    );
     return true;
   };
 } else {
