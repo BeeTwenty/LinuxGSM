@@ -1,9 +1,9 @@
 
 import fastify from "fastify";
-import fastifyCookie from "fastify-cookie";
-import fastifyCors from "fastify-cors";
-import fastifyRateLimit from "fastify-rate-limit";
-import fastifyWebsocket from "fastify-websocket";
+import fastifyCookie from "@fastify/cookie";
+import fastifyCors from "@fastify/cors";
+import fastifyRateLimit from "@fastify/rate-limit";
+import fastifyWebsocket from "@fastify/websocket";
 import { registerPermissionsAPI } from './api/permissions';
 import { registerUserAdminAPI } from './api/userAdmin';
 import { registerSettingsAPI } from './api/settings';
