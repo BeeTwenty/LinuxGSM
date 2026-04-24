@@ -50,6 +50,11 @@ if [ ! -d webui/backend ] || [ ! -d webui/frontend ]; then
 fi
 cd webui/backend
 npm ci --omit=dev
+# Ensure TypeScript is installed if tsc is missing
+if ! npx tsc --version >/dev/null 2>&1; then
+  echo "TypeScript not found, installing..."
+  npm install typescript --save-dev
+fi
 npm run build
 cd ../frontend
 npm ci --omit=dev
