@@ -19,13 +19,22 @@ else
   exit 1
 fi
 
+
 # 2. Clone LinuxGSM repo if not present
 if [ ! -d LinuxGSM ]; then
   git clone https://github.com/GameServerManagers/LinuxGSM.git
+  # Copy webui if it exists in the parent directory
+  if [ -d ../webui ]; then
+    cp -r ../webui LinuxGSM/
+  fi
   cd LinuxGSM
 else
   cd LinuxGSM
   git pull
+  # Copy webui if it exists in the parent directory and not already present
+  if [ ! -d webui ] && [ -d ../webui ]; then
+    cp -r ../webui .
+  fi
 fi
 
 # 3. Install Node.js (LTS) if not present
@@ -35,6 +44,10 @@ if ! command -v node >/dev/null 2>&1; then
 fi
 
 # 4. Build Web UI (production)
+if [ ! -d webui/backend ] || [ ! -d webui/frontend ]; then
+  echo "webui directory not found in LinuxGSM. Please ensure it exists before running this script."
+  exit 1
+fi
 cd webui/backend
 npm ci --omit=dev
 npm run build
