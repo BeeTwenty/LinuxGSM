@@ -113,70 +113,72 @@ export default function UserAdmin({ onClose }: { onClose: () => void }) {
             </thead>
             <tbody>
               {users.map((u) => (
-                <tr key={u.username} className="border-b border-gray-700">
-                  <td>{u.username}</td>
-                  <td>
-                    <select
-                      value={u.role}
-                      onChange={(e) => updateUser(u.username, { role: e.target.value as "admin" | "user" })}
-                      disabled={saving}
-                      className="bg-gray-800 text-white rounded px-2 py-1"
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button
-                      className={`px-2 py-1 rounded text-xs ${u.enabled ? "bg-green-700" : "bg-gray-600"}`}
-                      onClick={() => updateUser(u.username, { enabled: !u.enabled })}
-                      disabled={saving}
-                    >
-                      {u.enabled ? "Enabled" : "Disabled"}
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded text-xs mr-2"
-                      onClick={() => deleteUser(u.username)}
-                      disabled={saving}
-                    >
-                      Delete
-                    </button>
-                    <button
-                      className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
-                      onClick={() => fetchPerms(u.username)}
-                      disabled={permsLoading[u.username]}
-                    >
-                      Edit Perms
-                    </button>
-                  </td>
-                </tr>
-                {editingPerms[u.username] && (
-                  <tr>
-                    <td colSpan={4} className="bg-gray-900 p-2">
-                      <PermissionsEditor
-                        username={u.username}
-                        value={editingPerms[u.username]}
-                        onChange={(perms) => setEditingPerms((ep) => ({ ...ep, [u.username]: perms }))}
-                        disabled={permsLoading[u.username]}
-                      />
-                      <button
-                        className="bg-blue-700 hover:bg-blue-800 text-white px-2 py-1 rounded text-xs mt-2"
-                        onClick={() => savePerms(u.username)}
-                        disabled={permsLoading[u.username]}
+                <React.Fragment key={u.username}>
+                  <tr className="border-b border-gray-700">
+                    <td>{u.username}</td>
+                    <td>
+                      <select
+                        value={u.role}
+                        onChange={(e) => updateUser(u.username, { role: e.target.value as "admin" | "user" })}
+                        disabled={saving}
+                        className="bg-gray-800 text-white rounded px-2 py-1"
                       >
-                        Save Permissions
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </td>
+                    <td>
+                      <button
+                        className={`px-2 py-1 rounded text-xs ${u.enabled ? "bg-green-700" : "bg-gray-600"}`}
+                        onClick={() => updateUser(u.username, { enabled: !u.enabled })}
+                        disabled={saving}
+                      >
+                        {u.enabled ? "Enabled" : "Disabled"}
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded text-xs mr-2"
+                        onClick={() => deleteUser(u.username)}
+                        disabled={saving}
+                      >
+                        Delete
                       </button>
                       <button
-                        className="ml-2 text-gray-400 hover:text-white text-xs"
-                        onClick={() => setEditingPerms((ep) => { const { [u.username]: _, ...rest } = ep; return rest; })}
+                        className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                        onClick={() => fetchPerms(u.username)}
+                        disabled={permsLoading[u.username]}
                       >
-                        Cancel
+                        Edit Perms
                       </button>
                     </td>
                   </tr>
-                )}
+                  {editingPerms[u.username] && (
+                    <tr>
+                      <td colSpan={4} className="bg-gray-900 p-2">
+                        <PermissionsEditor
+                          username={u.username}
+                          value={editingPerms[u.username]}
+                          onChange={(perms) => setEditingPerms((ep) => ({ ...ep, [u.username]: perms }))}
+                          disabled={permsLoading[u.username]}
+                        />
+                        <button
+                          className="bg-blue-700 hover:bg-blue-800 text-white px-2 py-1 rounded text-xs mt-2"
+                          onClick={() => savePerms(u.username)}
+                          disabled={permsLoading[u.username]}
+                        >
+                          Save Permissions
+                        </button>
+                        <button
+                          className="ml-2 text-gray-400 hover:text-white text-xs"
+                          onClick={() => setEditingPerms((ep) => { const { [u.username]: _, ...rest } = ep; return rest; })}
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
               ))}
             </tbody>
           </table>
