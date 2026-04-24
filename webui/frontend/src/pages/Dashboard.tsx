@@ -1,3 +1,7 @@
+import Settings from './Settings';
+import SystemDiagnostics from './SystemDiagnostics';
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [systemDiagOpen, setSystemDiagOpen] = useState(false);
 <<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -75,7 +79,29 @@ export default function Dashboard() {
 
   return (
     <div className="p-8">
-      <h2 className="text-2xl font-bold mb-6">Managed Game Servers</h2>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Managed Game Servers</h2>
+        <div className="flex gap-2">
+          <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs" onClick={() => setSettingsOpen(true)}>Settings</button>
+          <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs" onClick={() => setSystemDiagOpen(true)}>System</button>
+        </div>
+      </div>
+            {settingsOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-gray-900 rounded shadow-lg max-w-lg w-full relative">
+                  <button className="absolute top-2 right-2 text-gray-400 hover:text-white" onClick={() => setSettingsOpen(false)}>✕</button>
+                  <Settings onClose={() => setSettingsOpen(false)} />
+                </div>
+              </div>
+            )}
+            {systemDiagOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                <div className="bg-gray-900 rounded shadow-lg max-w-2xl w-full relative">
+                  <button className="absolute top-2 right-2 text-gray-400 hover:text-white" onClick={() => setSystemDiagOpen(false)}>✕</button>
+                  <SystemDiagnostics onClose={() => setSystemDiagOpen(false)} />
+                </div>
+              </div>
+            )}
       {servers.length === 0 ? (
         <div>No servers found.</div>
       ) : (

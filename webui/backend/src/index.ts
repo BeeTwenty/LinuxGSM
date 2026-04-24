@@ -1,3 +1,7 @@
+import { registerSettingsAPI } from './api/settings';
+import { registerSystemAPI } from './api/system';
+registerSettingsAPI(app);
+registerSystemAPI(app);
 import { registerServerAlertsAPI } from './api/serverAlerts';
 registerServerAlertsAPI(app);
 import { registerServerScheduleAPI } from './api/serverSchedule';
