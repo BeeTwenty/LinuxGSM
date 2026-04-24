@@ -7,6 +7,7 @@ import ServerConfigs from './ServerConfigs';
 import ServerConsole from './ServerConsole';
 import ServerBackups from './ServerBackups';
 import ServerSchedules from './ServerSchedules';
+import ServerAlerts from './ServerAlerts';
 =======
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -38,6 +39,7 @@ export default function Dashboard() {
   const [consoleServer, setConsoleServer] = useState<string | null>(null);
   const [backupsServer, setBackupsServer] = useState<string | null>(null);
   const [schedulesServer, setSchedulesServer] = useState<string | null>(null);
+  const [alertsServer, setAlertsServer] = useState<string | null>(null);
 
   useEffect(() => {
     axios
@@ -141,6 +143,25 @@ export default function Dashboard() {
                 >
                   Schedules
                 </button>
+                <button
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                  onClick={() => setAlertsServer(server.id)}
+                >
+                  Alerts
+                </button>
+                                            {alertsServer && (
+                                              <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                                                <div className="bg-gray-900 rounded shadow-lg max-w-2xl w-full relative">
+                                                  <button
+                                                    className="absolute top-2 right-2 text-gray-400 hover:text-white"
+                                                    onClick={() => setAlertsServer(null)}
+                                                  >
+                                                    ✕
+                                                  </button>
+                                                  <ServerAlerts serverId={alertsServer} onClose={() => setAlertsServer(null)} />
+                                                </div>
+                                              </div>
+                                            )}
                                       {schedulesServer && (
                                         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                                           <div className="bg-gray-900 rounded shadow-lg max-w-2xl w-full relative">

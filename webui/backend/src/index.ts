@@ -1,3 +1,5 @@
+import { registerServerAlertsAPI } from './api/serverAlerts';
+registerServerAlertsAPI(app);
 import { registerServerScheduleAPI } from './api/serverSchedule';
 registerServerScheduleAPI(app);
 <<<<<<< HEAD
