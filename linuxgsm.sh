@@ -47,8 +47,21 @@ serverlistmenu="${datadir}/serverlistmenu.csv"
 [ -n "${LGSM_CONFIG}" ] && configdir="${LGSM_CONFIG}" || configdir="${lgsmdir}/config-lgsm"
 configdirserver="${configdir}/${gameservername}"
 configdirdefault="${lgsmdir}/config-default"
+
+# Web UI command dispatch
 userinput="${1}"
 userinput2="${2}"
+if [[ "${userinput}" =~ ^webui-(install|start|stop|restart|status|update|uninstall)$ ]]; then
+	scriptdir="$(dirname \"$(readlink -f \"${BASH_SOURCE[0]}\")\")/webui/scripts"
+	scriptname="${scriptdir}/${userinput}.sh"
+	if [ -x "${scriptname}" ]; then
+		exec "${scriptname}" "${@:2}"
+		exit $?
+	else
+		echo -e "[ FAIL ] Web UI script not found: ${scriptname}"
+		exit 1
+	fi
+fi
 
 ## GitHub Branch Select
 # Allows for the use of different function files

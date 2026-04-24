@@ -1,0 +1,13 @@
+[Unit]
+Description=LinuxGSM Web UI Backend
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/LinuxGSM/webui/backend
+ExecStart=/usr/bin/node dist/index.js
+Restart=on-failure
+User=%u
+
+[Install]
+WantedBy=default.target
