@@ -42,14 +42,17 @@ if [[ "$install_webui" =~ ^[Yy]$ ]]; then
   # Install all required system dependencies for backend build (all major distros)
   echo "[INFO] Checking and installing required system dependencies..."
   if [ -f /etc/debian_version ]; then
-    # Remove conflicting npm if present
+    # Remove npm and fix held/broken packages
     sudo apt-get remove -y npm || true
+    sudo apt-get purge -y npm || true
+    sudo apt-get autoremove -y
+    sudo apt-get update
     # Install Node.js from Nodesource if not present
     if ! command -v node >/dev/null 2>&1; then
       curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
       sudo apt-get install -y nodejs
     fi
-    sudo apt-get update && sudo apt-get install -y libpam0g-dev build-essential python3 curl
+    sudo apt-get install -y libpam0g-dev build-essential python3 curl
   elif [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
     sudo yum install -y pam-devel @development-tools python3 nodejs curl
   elif [ -f /etc/alpine-release ]; then
