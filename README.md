@@ -1,3 +1,20 @@
+## :globe_with_meridians: Web UI (Beta)
+
+LinuxGSM now includes an optional, modern Web UI for browser-based management.
+
+- Secure Linux user authentication (PAM)
+- Per-user roles and fine-grained permissions
+- Real-time logs, console, config editing, backup, scheduling, alerts, and more
+- User/admin management and settings
+
+**Requirements:** Linux host, Node.js, LinuxGSM installed
+
+**Quick start:**
+1. `cd webui/backend && npm install && npm run build && npm start`
+2. Open `http://localhost:3000` in your browser
+3. Log in with your Linux user credentials
+
+See [webui/README.md](webui/README.md) for full details.
 <p align="center">
   <a href="https://linuxgsm.com"><img src="https://i.imgur.com/Eoh1jsi.jpg" alt="LinuxGSM">
   <a href="https://www.codacy.com/gh/GameServerManagers/LinuxGSM/dashboard"><img src="https://img.shields.io/codacy/grade/d19c5234dc3743d8a8a14093711ca52d?style=flat-square&logo=codacy&logoColor=white" alt="Codacy grade"></a>
