@@ -1,3 +1,8 @@
+import { registerServerDetailsAPI } from './api/serverDetails';
+import { registerServerConfigAPI } from './api/serverConfig';
+// Register server details and config APIs
+registerServerDetailsAPI(app);
+registerServerConfigAPI(app);
 import { registerLogStreamWS } from './logs/stream';
 // Register WebSocket log streaming
 registerLogStreamWS(app);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ServerLogs from './ServerLogs';
+import ServerDetails from './ServerDetails';
 
 interface Server {
   id: string;
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const [actionResult, setActionResult] = useState<Record<string, string>>({});
   const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
   const [logServer, setLogServer] = useState<string | null>(null);
+  const [detailsServer, setDetailsServer] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get('/api/servers')
@@ -68,12 +70,20 @@ export default function Dashboard() {
               {actionResult[server.id] && (
                 <pre className="bg-gray-900 text-green-300 p-2 rounded text-xs overflow-x-auto max-h-32 whitespace-pre-wrap">{actionResult[server.id]}</pre>
               )}
-              <button
-                className="mt-2 bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
-                onClick={() => setLogServer(server.id)}
-              >
-                View Logs
-              </button>
+              <div className="flex gap-2 mt-2">
+                <button
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                  onClick={() => setLogServer(server.id)}
+                >
+                  View Logs
+                </button>
+                <button
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                  onClick={() => setDetailsServer(server.id)}
+                >
+                  Details
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -88,6 +98,19 @@ export default function Dashboard() {
               ✕
             </button>
             <ServerLogs serverId={logServer} />
+          </div>
+        </div>
+      )}
+      {detailsServer && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-gray-900 rounded shadow-lg max-w-lg w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-400 hover:text-white"
+              onClick={() => setDetailsServer(null)}
+            >
+              ✕
+            </button>
+            <ServerDetails serverId={detailsServer} onClose={() => setDetailsServer(null)} />
           </div>
         </div>
       )}
