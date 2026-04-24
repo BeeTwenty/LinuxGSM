@@ -42,9 +42,17 @@ if [[ "$install_webui" =~ ^[Yy]$ ]]; then
   # Install all required system dependencies for backend build (all major distros)
   echo "[INFO] Checking and installing required system dependencies..."
   if [ -f /etc/debian_version ]; then
-    # Remove npm and fix held/broken packages
-    sudo apt-get remove -y npm || true
-    sudo apt-get purge -y npm || true
+    # Remove npm and all packages that depend on it
+    echo "[INFO] Checking for packages that depend on npm..."
+    NPM_DEPS=$(apt-cache rdepends --installed npm | grep -v "^ " | grep -v "^npm$" | grep -v "^Reverse Depends:" || true)
+    if dpkg -l | grep -q npm; then
+      sudo apt-get remove -y npm || true
+      sudo apt-get purge -y npm || true
+    fi
+    for pkg in $NPM_DEPS; do
+      sudo apt-get remove -y "$pkg" || true
+      sudo apt-get purge -y "$pkg" || true
+    done
     sudo apt-get autoremove -y
     sudo apt-get update
     # Install Node.js from Nodesource if not present
