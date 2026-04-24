@@ -1,3 +1,4 @@
+import PermissionsEditor, { Permission } from "../components/PermissionsEditor";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -5,7 +6,33 @@ interface WebUIUser {
   username: string;
   role: "admin" | "user";
   enabled: boolean;
+  permissions?: Permission[];
 }
+  const [editingPerms, setEditingPerms] = useState<Record<string, Permission[]>>({});
+  const [permsLoading, setPermsLoading] = useState<Record<string, boolean>>({});
+  // Fetch permissions for a user
+  const fetchPerms = async (username: string) => {
+    setPermsLoading((pl) => ({ ...pl, [username]: true }));
+    try {
+      const res = await axios.get(`/api/admin/users/${username}/permissions`);
+      setEditingPerms((ep) => ({ ...ep, [username]: res.data.permissions }));
+    } catch {
+      setEditingPerms((ep) => ({ ...ep, [username]: [] }));
+    } finally {
+      setPermsLoading((pl) => ({ ...pl, [username]: false }));
+    }
+  };
+  // Save permissions for a user
+  const savePerms = async (username: string) => {
+    setPermsLoading((pl) => ({ ...pl, [username]: true }));
+    try {
+      await axios.put(`/api/admin/users/${username}/permissions`, { permissions: editingPerms[username] });
+    } catch {
+      alert("Failed to update permissions");
+    } finally {
+      setPermsLoading((pl) => ({ ...pl, [username]: false }));
+    }
+  };
 
 export default function UserAdmin({ onClose }: { onClose: () => void }) {
   const [users, setUsers] = useState<WebUIUser[]>([]);
@@ -110,14 +137,46 @@ export default function UserAdmin({ onClose }: { onClose: () => void }) {
                   </td>
                   <td>
                     <button
-                      className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded text-xs"
+                      className="bg-red-700 hover:bg-red-800 text-white px-2 py-1 rounded text-xs mr-2"
                       onClick={() => deleteUser(u.username)}
                       disabled={saving}
                     >
                       Delete
                     </button>
+                    <button
+                      className="bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs"
+                      onClick={() => fetchPerms(u.username)}
+                      disabled={permsLoading[u.username]}
+                    >
+                      Edit Perms
+                    </button>
                   </td>
                 </tr>
+                {editingPerms[u.username] && (
+                  <tr>
+                    <td colSpan={4} className="bg-gray-900 p-2">
+                      <PermissionsEditor
+                        username={u.username}
+                        value={editingPerms[u.username]}
+                        onChange={(perms) => setEditingPerms((ep) => ({ ...ep, [u.username]: perms }))}
+                        disabled={permsLoading[u.username]}
+                      />
+                      <button
+                        className="bg-blue-700 hover:bg-blue-800 text-white px-2 py-1 rounded text-xs mt-2"
+                        onClick={() => savePerms(u.username)}
+                        disabled={permsLoading[u.username]}
+                      >
+                        Save Permissions
+                      </button>
+                      <button
+                        className="ml-2 text-gray-400 hover:text-white text-xs"
+                        onClick={() => setEditingPerms((ep) => { const { [u.username]: _, ...rest } = ep; return rest; })}
+                      >
+                        Cancel
+                      </button>
+                    </td>
+                  </tr>
+                )}
               ))}
             </tbody>
           </table>
