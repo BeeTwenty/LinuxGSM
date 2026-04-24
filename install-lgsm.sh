@@ -32,10 +32,21 @@ fi
 # 5. Prompt to install Web UI
 read -rp "Install Web UI? [Y/n]: " install_webui
 install_webui=${install_webui:-Y}
+
 if [[ "$install_webui" =~ ^[Yy]$ ]]; then
-  cd "$install_dir"
-  ./linuxgsm.sh webui-install
-  echo "Web UI installed. Use './linuxgsm.sh webui-start' to launch."
+  echo "[INFO] Installing Web UI..."
+  WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
+  if [ ! -x "$WEBUI_INSTALL_SCRIPT" ]; then
+    chmod +x "$WEBUI_INSTALL_SCRIPT"
+  fi
+  if "$WEBUI_INSTALL_SCRIPT"; then
+    echo "[SUCCESS] Web UI installed. Use './linuxgsm.sh webui-start' to launch."
+  else
+    echo "[ERROR] Web UI install failed."
+    echo "[TROUBLESHOOT] Check Node.js version (>=18), npm logs, and ensure all dependencies are met."
+    echo "[TROUBLESHOOT] Try running: cd webui/backend && npm install && npm run build"
+    exit 1
+  fi
 fi
 
 echo "\nLinuxGSM and Web UI installation complete!"
