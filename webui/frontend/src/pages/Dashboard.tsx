@@ -1,3 +1,5 @@
+import UserAdmin from './UserAdmin';
+  const [userAdminOpen, setUserAdminOpen] = useState(false);
 import Settings from './Settings';
 import SystemDiagnostics from './SystemDiagnostics';
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -84,8 +86,17 @@ export default function Dashboard() {
         <div className="flex gap-2">
           <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs" onClick={() => setSettingsOpen(true)}>Settings</button>
           <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs" onClick={() => setSystemDiagOpen(true)}>System</button>
+          <button className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs" onClick={() => setUserAdminOpen(true)}>User/Admin</button>
         </div>
       </div>
+                  {userAdminOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+                      <div className="bg-gray-900 rounded shadow-lg max-w-lg w-full relative">
+                        <button className="absolute top-2 right-2 text-gray-400 hover:text-white" onClick={() => setUserAdminOpen(false)}>✕</button>
+                        <UserAdmin onClose={() => setUserAdminOpen(false)} />
+                      </div>
+                    </div>
+                  )}
             {settingsOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                 <div className="bg-gray-900 rounded shadow-lg max-w-lg w-full relative">

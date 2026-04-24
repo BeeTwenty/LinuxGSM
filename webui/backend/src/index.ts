@@ -1,3 +1,5 @@
+import { registerUserAdminAPI } from './api/userAdmin';
+registerUserAdminAPI(app);
 import { registerSettingsAPI } from './api/settings';
 import { registerSystemAPI } from './api/system';
 registerSettingsAPI(app);
