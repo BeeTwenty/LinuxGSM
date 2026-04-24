@@ -14,9 +14,9 @@ export const PERMISSIONS = [
   "alerts:manage",
   "settings:edit",
   "system:diagnose",
-  "users:manage"
+  "users:manage",
 ] as const;
-export type Permission = typeof PERMISSIONS[number];
+export type Permission = (typeof PERMISSIONS)[number];
 
 // Extend user model to support permissions
 export interface WebUIUserWithPerms extends WebUIUser {
@@ -38,30 +38,41 @@ function writeUsersWithPerms(users: WebUIUserWithPerms[]) {
 
 export function registerPermissionsAPI(app: FastifyInstance) {
   // List all permissions
-  app.get("/api/admin/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    reply.send({ permissions: PERMISSIONS });
-  });
+  app.get(
+    "/api/admin/permissions",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      reply.send({ permissions: PERMISSIONS });
+    },
+  );
 
   // Get/set user permissions
-  app.get("/api/admin/users/:username/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    const { username } = req.params as { username: string };
-    const users = readUsersWithPerms();
-    const user = users.find((u) => u.username === username);
-    if (!user) return reply.code(404).send({ error: "User not found" });
-    reply.send({ permissions: user.permissions || [] });
-  });
+  app.get(
+    "/api/admin/users/:username/permissions",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      const { username } = req.params as { username: string };
+      const users = readUsersWithPerms();
+      const user = users.find((u) => u.username === username);
+      if (!user) return reply.code(404).send({ error: "User not found" });
+      reply.send({ permissions: user.permissions || [] });
+    },
+  );
 
-  app.put("/api/admin/users/:username/permissions", { preHandler: [requireAuth, requirePermission("users:manage")] }, (req, reply) => {
-    const { username } = req.params as { username: string };
-    const { permissions } = req.body as { permissions: Permission[] };
-    if (!Array.isArray(permissions)) return reply.code(400).send({ error: "Invalid permissions" });
-    const users = readUsersWithPerms();
-    const user = users.find((u) => u.username === username);
-    if (!user) return reply.code(404).send({ error: "User not found" });
-    user.permissions = permissions;
-    writeUsersWithPerms(users);
-    reply.send({ success: true });
-  });
+  app.put(
+    "/api/admin/users/:username/permissions",
+    { preHandler: [requireAuth, requirePermission("users:manage")] },
+    (req, reply) => {
+      const { username } = req.params as { username: string };
+      const { permissions } = req.body as { permissions: Permission[] };
+      if (!Array.isArray(permissions))
+        return reply.code(400).send({ error: "Invalid permissions" });
+      const users = readUsersWithPerms();
+      const user = users.find((u) => u.username === username);
+      if (!user) return reply.code(404).send({ error: "User not found" });
+      user.permissions = permissions;
+      writeUsersWithPerms(users);
+      reply.send({ success: true });
+    },
+  );
 }
-
-

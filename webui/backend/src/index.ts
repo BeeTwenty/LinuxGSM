@@ -1,17 +1,16 @@
-
 import fastify from "fastify";
 import fastifyCookie from "@fastify/cookie";
 import fastifyCors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyWebsocket from "@fastify/websocket";
-import { registerPermissionsAPI } from './api/permissions';
-import { registerUserAdminAPI } from './api/userAdmin';
-import { registerSettingsAPI } from './api/settings';
-import { registerSystemAPI } from './api/system';
-import { registerServerAlertsAPI } from './api/serverAlerts';
-import { registerServerScheduleAPI } from './api/serverSchedule';
-import { registerServerBackupAPI } from './api/serverBackup';
-import { registerConsoleWS } from './sockets/console';
+import { registerPermissionsAPI } from "./api/permissions";
+import { registerUserAdminAPI } from "./api/userAdmin";
+import { registerSettingsAPI } from "./api/settings";
+import { registerSystemAPI } from "./api/system";
+import { registerServerAlertsAPI } from "./api/serverAlerts";
+import { registerServerScheduleAPI } from "./api/serverSchedule";
+import { registerServerBackupAPI } from "./api/serverBackup";
+import { registerConsoleWS } from "./sockets/console";
 import { registerServerDetailsAPI } from "./api/serverDetails";
 import { registerServerConfigAPI } from "./api/serverConfig";
 import { registerLogStreamWS } from "./logs/stream";

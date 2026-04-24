@@ -4,7 +4,6 @@ set -e
 # Unified LinuxGSM + Web UI installer
 # Usage: curl -Lo install-lgsm.sh https://linuxgsm.sh && chmod +x install-lgsm.sh && ./install-lgsm.sh
 
-
 # 1. Auto-detect current directory as default for install_dir
 default_dir="$(pwd)"
 read -rp "Install directory [${default_dir}]: " install_dir
@@ -18,14 +17,14 @@ mkdir -p "$install_dir"
 cd "$install_dir"
 
 if [ "$EUID" -eq 0 ]; then
-  echo "Do not run as root. Please run as the target user."
-  exit 1
+	echo "Do not run as root. Please run as the target user."
+	exit 1
 fi
 
 # 3. Download LinuxGSM core script
 if [ ! -f linuxgsm.sh ]; then
-  curl -Lo linuxgsm.sh https://linuxgsm.sh
-  chmod +x linuxgsm.sh
+	curl -Lo linuxgsm.sh https://linuxgsm.sh
+	chmod +x linuxgsm.sh
 fi
 
 # 4. Install LinuxGSM (core only, no per-server user creation)
@@ -35,63 +34,61 @@ fi
 read -rp "Install Web UI? [Y/n]: " install_webui
 install_webui=${install_webui:-Y}
 
-
-
 if [[ "$install_webui" =~ ^[Yy]$ ]]; then
-  echo "[INFO] Installing Web UI..."
-  # Install all required system dependencies for backend build (all major distros)
-  echo "[INFO] Checking and installing required system dependencies..."
-  if [ -f /etc/debian_version ]; then
-    # Remove npm and all packages that depend on it, then pin npm
-    echo "[INFO] Checking for packages that depend on npm..."
-    NPM_DEPS=$(apt-cache rdepends --installed npm | grep -v "^ " | grep -v "^npm$" | grep -v "^Reverse Depends:" || true)
-    if dpkg -l | grep -q npm; then
-      sudo apt-get remove -y npm || true
-      sudo apt-get purge -y npm || true
-    fi
-    for pkg in $NPM_DEPS; do
-      sudo apt-get remove -y "$pkg" || true
-      sudo apt-get purge -y "$pkg" || true
-    done
-    sudo apt-mark hold npm
-    sudo apt-get autoremove -y
-    sudo apt-get update
-    # Check if npm is still present or held
-    if apt list --installed 2>/dev/null | grep -q '^npm/'; then
-      echo '[FATAL] npm is still installed or held. Please run: sudo apt-get purge -y npm && sudo apt-mark hold npm'
-      exit 1
-    fi
-    # Install Node.js from Nodesource if not present
-    if ! command -v node >/dev/null 2>&1; then
-      curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
-      sudo apt-get install -y nodejs
-    fi
-    sudo apt-get install -y libpam0g-dev build-essential python3 curl
-  elif [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
-    sudo yum install -y pam-devel @development-tools python3 nodejs curl
-  elif [ -f /etc/alpine-release ]; then
-    sudo apk add linux-pam-dev build-base python3 nodejs curl
-  elif [ -f /etc/os-release ] && grep -qi suse /etc/os-release; then
-    sudo zypper install -y pam-devel -t pattern devel_basis python3 nodejs curl
-  else
-    echo "[WARNING] Unknown distro. Please install libpam-dev, build tools, python3, nodejs, curl manually."
-  fi
-  WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
-  if [ ! -f "$WEBUI_INSTALL_SCRIPT" ]; then
-    echo "[ERROR] Could not find $WEBUI_INSTALL_SCRIPT. Please check your install directory."
-    exit 1
-  fi
-  if [ ! -x "$WEBUI_INSTALL_SCRIPT" ]; then
-    chmod +x "$WEBUI_INSTALL_SCRIPT"
-  fi
-  if "$WEBUI_INSTALL_SCRIPT"; then
-    echo "[SUCCESS] Web UI installed. Use './linuxgsm.sh webui-start' to launch."
-  else
-    echo "[ERROR] Web UI install failed."
-    echo "[TROUBLESHOOT] Check Node.js version (>=18), npm logs, and ensure all dependencies are met."
-    echo "[TROUBLESHOOT] Try running: cd webui/backend && npm install && npm run build"
-    exit 1
-  fi
+	echo "[INFO] Installing Web UI..."
+	# Install all required system dependencies for backend build (all major distros)
+	echo "[INFO] Checking and installing required system dependencies..."
+	if [ -f /etc/debian_version ]; then
+		# Remove npm and all packages that depend on it, then pin npm
+		echo "[INFO] Checking for packages that depend on npm..."
+		NPM_DEPS=$(apt-cache rdepends --installed npm | grep -v "^ " | grep -v "^npm$" | grep -v "^Reverse Depends:" || true)
+		if dpkg -l | grep -q npm; then
+			sudo apt-get remove -y npm || true
+			sudo apt-get purge -y npm || true
+		fi
+		for pkg in $NPM_DEPS; do
+			sudo apt-get remove -y "$pkg" || true
+			sudo apt-get purge -y "$pkg" || true
+		done
+		sudo apt-mark hold npm
+		sudo apt-get autoremove -y
+		sudo apt-get update
+		# Check if npm is still present or held
+		if apt list --installed 2> /dev/null | grep -q '^npm/'; then
+			echo '[FATAL] npm is still installed or held. Please run: sudo apt-get purge -y npm && sudo apt-mark hold npm'
+			exit 1
+		fi
+		# Install Node.js from Nodesource if not present
+		if ! command -v node > /dev/null 2>&1; then
+			curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+			sudo apt-get install -y nodejs
+		fi
+		sudo apt-get install -y libpam0g-dev build-essential python3 curl
+	elif [ -f /etc/redhat-release ] || [ -f /etc/centos-release ]; then
+		sudo yum install -y pam-devel @development-tools python3 nodejs curl
+	elif [ -f /etc/alpine-release ]; then
+		sudo apk add linux-pam-dev build-base python3 nodejs curl
+	elif [ -f /etc/os-release ] && grep -qi suse /etc/os-release; then
+		sudo zypper install -y pam-devel -t pattern devel_basis python3 nodejs curl
+	else
+		echo "[WARNING] Unknown distro. Please install libpam-dev, build tools, python3, nodejs, curl manually."
+	fi
+	WEBUI_INSTALL_SCRIPT="$install_dir/webui/scripts/webui-install.sh"
+	if [ ! -f "$WEBUI_INSTALL_SCRIPT" ]; then
+		echo "[ERROR] Could not find $WEBUI_INSTALL_SCRIPT. Please check your install directory."
+		exit 1
+	fi
+	if [ ! -x "$WEBUI_INSTALL_SCRIPT" ]; then
+		chmod +x "$WEBUI_INSTALL_SCRIPT"
+	fi
+	if "$WEBUI_INSTALL_SCRIPT"; then
+		echo "[SUCCESS] Web UI installed. Use './linuxgsm.sh webui-start' to launch."
+	else
+		echo "[ERROR] Web UI install failed."
+		echo "[TROUBLESHOOT] Check Node.js version (>=18), npm logs, and ensure all dependencies are met."
+		echo "[TROUBLESHOOT] Try running: cd webui/backend && npm install && npm run build"
+		exit 1
+	fi
 fi
 
 echo "\nLinuxGSM and Web UI installation complete!"

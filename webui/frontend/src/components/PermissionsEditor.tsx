@@ -14,7 +14,12 @@ export type Permission =
   | "system:diagnose"
   | "users:manage";
 
-export default function PermissionsEditor({ username, value, onChange, disabled }: {
+export default function PermissionsEditor({
+  username,
+  value,
+  onChange,
+  disabled,
+}: {
   username: string;
   value: Permission[];
   onChange: (perms: Permission[]) => void;
@@ -22,12 +27,14 @@ export default function PermissionsEditor({ username, value, onChange, disabled 
 }) {
   const [allPerms, setAllPerms] = useState<Permission[]>([]);
   useEffect(() => {
-    axios.get("/api/admin/permissions").then(res => setAllPerms(res.data.permissions));
+    axios
+      .get("/api/admin/permissions")
+      .then((res) => setAllPerms(res.data.permissions));
   }, []);
 
   const toggle = (perm: Permission) => {
     if (value.includes(perm)) {
-      onChange(value.filter(p => p !== perm));
+      onChange(value.filter((p) => p !== perm));
     } else {
       onChange([...value, perm]);
     }

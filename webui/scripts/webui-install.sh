@@ -11,7 +11,6 @@ cd "$WEBUI_ROOT"
 
 echo "[INFO] Starting LinuxGSM Web UI install..."
 
-
 # Ensure all system dependencies are present (Linux only)
 if [ "$(uname -s)" = "Linux" ]; then
 	echo "[INFO] Checking and installing required system dependencies..."
@@ -28,8 +27,8 @@ if [ "$(uname -s)" = "Linux" ]; then
 	fi
 fi
 if ! command -v node > /dev/null 2>&1; then
-		echo "[ERROR] Node.js is required. Please install Node.js >= 18."
-		exit 1
+	echo "[ERROR] Node.js is required. Please install Node.js >= 18."
+	exit 1
 fi
 
 echo "[INFO] Installing backend dependencies..."
