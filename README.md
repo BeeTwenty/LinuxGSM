@@ -1,7 +1,18 @@
-## :globe_with_meridians: Web UI (Beta)
+## :globe_with_meridians: Web UI (Optional)
 
-LinuxGSM now includes an optional, modern Web UI for browser-based management.
+LinuxGSM offers an optional, modern Web UI for browser-based management. The Web UI is not required for CLI operation and can be installed, started, stopped, updated, or uninstalled at any time. It runs alongside your existing LinuxGSM setup.
 
+**To manage the Web UI, use:**
+
+  ./gameserver webui-install      # Install the Web UI
+  ./gameserver webui-start        # Start the Web UI
+  ./gameserver webui-stop         # Stop the Web UI
+  ./gameserver webui-restart      # Restart the Web UI
+  ./gameserver webui-status       # Check Web UI status
+  ./gameserver webui-update       # Update the Web UI
+  ./gameserver webui-uninstall    # Uninstall the Web UI
+
+**Features:**
 - Secure Linux user authentication (PAM)
 - Per-user roles and fine-grained permissions
 - Real-time logs, console, config editing, backup, scheduling, alerts, and more
@@ -10,9 +21,10 @@ LinuxGSM now includes an optional, modern Web UI for browser-based management.
 **Requirements:** Linux host, Node.js, LinuxGSM installed
 
 **Quick start:**
-1. `cd webui/backend && npm install && npm run build && npm start`
-2. Open `http://localhost:3000` in your browser
-3. Log in with your Linux user credentials
+1. `./gameserver webui-install`
+2. `./gameserver webui-start`
+3. Open `http://localhost:3000` in your browser
+4. Log in with your Linux user credentials
 
 See [webui/README.md](webui/README.md) for full details.
 <p align="center">
